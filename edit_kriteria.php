@@ -2,46 +2,82 @@
 include 'koneksi.php';
 include 'layout/header.php';
 
-$id = $_GET['id'];
-$data = mysqli_query($koneksi, "SELECT * FROM kriteria WHERE id='$id'");
-$d = mysqli_fetch_assoc($data);
+// =======================
+// CEK ID KRITERIA
+// =======================
+if (!isset($_GET['id_kriteria'])) {
+    die("ID kriteria tidak ditemukan");
+}
 
-if(isset($_POST['submit'])){
-    $nama = $_POST['nama_kriteria'];
+$id = $_GET['id_kriteria'];
 
-    // otomatis tentukan tipe
-    if($nama=='Harga Sewa' || $nama=='Jarak ke Kampus'){
-        $tipe = 'cost';
-    } else {
-        $tipe = 'benefit';
-    }
+// =======================
+// AMBIL DATA KRITERIA
+// =======================
+$query = mysqli_query($conn, "SELECT * FROM kriteria WHERE id_kriteria='$id'");
+if (mysqli_num_rows($query) == 0) {
+    die("Data kriteria tidak ditemukan");
+}
+$data = mysqli_fetch_assoc($query);
 
+// =======================
+// PROSES UPDATE
+// =======================
+if (isset($_POST['submit'])) {
+    $nama  = $_POST['nama_kriteria'];
+    $jenis = $_POST['jenis'];
     $bobot = $_POST['bobot'];
 
-    $query = mysqli_query($koneksi, "UPDATE kriteria SET nama_kriteria='$nama', tipe='$tipe', bobot='$bobot' WHERE id='$id'");
-    if($query){
-        echo "<script>alert('Kriteria berhasil diubah'); window.location='kriteria.php';</script>";
+    $update = mysqli_query($conn, "
+        UPDATE kriteria 
+        SET nama_kriteria='$nama', 
+            jenis='$jenis', 
+            bobot='$bobot'
+        WHERE id_kriteria='$id'
+    ");
+
+    if ($update) {
+        echo "<script>
+                alert('Kriteria berhasil diubah');
+                window.location='kriteria.php';
+              </script>";
+        exit;
     } else {
-        echo "Error: ".mysqli_error($koneksi);
+        echo "Error: " . mysqli_error($conn);
     }
 }
 ?>
 
-<h2>Edit Kriteria</h2>
-<form method="POST">
-    <label>Nama Kriteria</label><br>
-    <select name="nama_kriteria" required>
-        <option value="Harga Sewa" <?= $d['nama_kriteria']=='Harga Sewa'?'selected':'' ?>>Harga Sewa</option>
-        <option value="Jarak ke Kampus" <?= $d['nama_kriteria']=='Jarak ke Kampus'?'selected':'' ?>>Jarak ke Kampus</option>
-        <option value="Fasilitas" <?= $d['nama_kriteria']=='Fasilitas'?'selected':'' ?>>Fasilitas</option>
-        <option value="Luas Kamar" <?= $d['nama_kriteria']=='Luas Kamar'?'selected':'' ?>>Luas Kamar</option>
-    </select><br><br>
+<div class="card">
+    <h2>Edit Kriteria</h2>
 
-    <label>Bobot</label><br>
-    <input type="number" step="0.01" name="bobot" value="<?= $d['bobot'] ?>" required><br><br>
+    <form method="POST">
+        <label>Nama Kriteria</label><br>
+        <input 
+            type="text" 
+            name="nama_kriteria" 
+            value="<?= $data['nama_kriteria'] ?>" 
+            required
+        ><br><br>
 
-    <input type="submit" name="submit" value="Simpan" class="btn">
-    <a href="kriteria.php" class="btn">Batal</a>
-</form>
+        <label>Jenis Kriteria</label><br>
+        <select name="jenis" required>
+            <option value="benefit" <?= $data['jenis']=='benefit'?'selected':'' ?>>Benefit</option>
+            <option value="cost" <?= $data['jenis']=='cost'?'selected':'' ?>>Cost</option>
+        </select><br><br>
+
+        <label>Bobot</label><br>
+        <input 
+            type="number" 
+            step="0.01" 
+            name="bobot" 
+            value="<?= $data['bobot'] ?>" 
+            required
+        ><br><br>
+
+        <button type="submit" name="submit" class="btn">Simpan</button>
+        <a href="kriteria.php" class="btn btn-danger">Batal</a>
+    </form>
+</div>
 
 <?php include 'layout/footer.php'; ?>

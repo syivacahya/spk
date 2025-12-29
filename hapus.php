@@ -1,7 +1,9 @@
 <?php
 include 'koneksi.php';
 
-// cek parameter
+// ===============================
+// CEK PARAMETER
+// ===============================
 if (!isset($_GET['id']) || !isset($_GET['tabel'])) {
     die('Parameter tidak lengkap');
 }
@@ -9,23 +11,37 @@ if (!isset($_GET['id']) || !isset($_GET['tabel'])) {
 $id    = $_GET['id'];
 $tabel = $_GET['tabel'];
 
-// whitelist tabel yang boleh dihapus
-$allowed = ['kriteria','alternatif'];
-
+// ===============================
+// WHITELIST TABEL
+// ===============================
+$allowed = ['kriteria', 'alternatif'];
 if (!in_array($tabel, $allowed)) {
     die('Tabel tidak diizinkan');
 }
 
-// tentukan kolom primary key sesuai tabel
-$kolom_id = ($tabel == 'kriteria') ? 'id_kriteria' : 'id_alternatif';
+// ===============================
+// TENTUKAN PRIMARY KEY
+// ===============================
+if ($tabel == 'kriteria') {
+    $kolom_id = 'id_kriteria';
+} else {
+    $kolom_id = 'id_alternatif';
+}
 
-// hapus data
-$q = mysqli_query($conn, "DELETE FROM $tabel WHERE $kolom_id='$id'");
-if (!$q) {
+// ===============================
+// HAPUS DATA
+// ===============================
+$query = mysqli_query(
+    $conn,
+    "DELETE FROM $tabel WHERE $kolom_id = '$id'"
+);
+
+if (!$query) {
     die("Gagal menghapus data: " . mysqli_error($conn));
 }
 
-// redirect ke halaman tabel masing-masing
-header("location:{$tabel}.php");
+// ===============================
+// REDIRECT
+// ===============================
+header("Location: {$tabel}.php");
 exit;
-?>

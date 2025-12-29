@@ -1,5 +1,7 @@
 <?php
 include 'koneksi.php';
+include 'layout/header.php';
+
 
 /* =========================
    AMBIL DATA KRITERIA

@@ -18,14 +18,14 @@ include 'layout/header.php';
 
         <?php
         $no = 1;
-        // Ambil kode dan nama kos saja
         $q = mysqli_query($conn, "SELECT id_alternatif, kode, nama_kos FROM alternatif ORDER BY id_alternatif");
-        while ($d = mysqli_fetch_assoc($q)) {
+        if($q && mysqli_num_rows($q) > 0){
+            while ($d = mysqli_fetch_assoc($q)) {
         ?>
         <tr>
             <td><?= $no++ ?></td>
-            <td><?= $d['kode'] ?></td>
-            <td><?= $d['nama_kos'] ?></td>
+            <td><?= htmlspecialchars($d['kode']); ?></td>
+            <td><?= htmlspecialchars($d['nama_kos']); ?></td>
             <td>
                 <a href="edit_alternatif.php?id=<?= $d['id_alternatif'] ?>" class="btn">Edit</a>
                 <a href="hapus.php?id=<?= $d['id_alternatif'] ?>&tabel=alternatif" 
@@ -33,7 +33,12 @@ include 'layout/header.php';
                    onclick="return confirm('Hapus data ini?')">Hapus</a>
             </td>
         </tr>
-        <?php } ?>
+        <?php 
+            }
+        } else {
+            echo "<tr><td colspan='4'>Belum ada data alternatif</td></tr>";
+        }
+        ?>
     </table>
 </div>
 

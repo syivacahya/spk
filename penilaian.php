@@ -1,5 +1,7 @@
 <?php
 include 'koneksi.php';
+include 'layout/header.php';
+
 
 // ===============================
 // SIMPAN PENILAIAN

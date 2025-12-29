@@ -2,24 +2,18 @@
 include 'koneksi.php';
 include 'layout/header.php';
 
-$daftar_kriteria = [
-    'Jarak ke Kampus' => 'cost',
-    'Harga' => 'cost',
-    'Luas Kamar' => 'benefit',
-    'Fasilitas' => 'benefit'
-];
-
 if (isset($_POST['simpan'])) {
     $nama  = $_POST['nama_kriteria'];
+    $jenis = $_POST['jenis']; // cost / benefit
     $bobot = $_POST['bobot'];
-    $jenis = $daftar_kriteria[$nama];
 
     mysqli_query($conn, "
         INSERT INTO kriteria (nama_kriteria, jenis, bobot)
         VALUES ('$nama', '$jenis', '$bobot')
     ");
 
-    echo "<script>alert('Kriteria ditambahkan');window.location='kriteria.php';</script>";
+    echo "<script>alert('Kriteria berhasil ditambahkan');
+          window.location='kriteria.php';</script>";
 }
 ?>
 
@@ -27,17 +21,20 @@ if (isset($_POST['simpan'])) {
 
 <form method="post">
     <label>Nama Kriteria</label><br>
-    <select name="nama_kriteria" required>
-        <option value="">-- Pilih Kriteria --</option>
-        <?php foreach ($daftar_kriteria as $k => $v): ?>
-            <option value="<?= $k ?>"><?= $k ?></option>
-        <?php endforeach; ?>
+    <input type="text" name="nama_kriteria" required><br><br>
+
+    <label>Jenis Kriteria</label><br>
+    <select name="jenis" required>
+        <option value="">-- Pilih Jenis --</option>
+        <option value="benefit">Benefit</option>
+        <option value="cost">Cost</option>
     </select><br><br>
 
     <label>Bobot</label><br>
     <input type="number" step="0.01" name="bobot" required><br><br>
 
     <button type="submit" name="simpan">Simpan</button>
+    <a href="kriteria.php" class="btn btn-danger">Batal</a>
 </form>
 
 <?php include 'layout/footer.php'; ?>
