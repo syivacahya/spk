@@ -12,8 +12,11 @@
     <a href="kriteria.php">📋 Data Kriteria</a>
     <a href="alternatif.php">🏘️ Data Alternatif</a>
     <a href="penilaian.php">📝 Data Penilaian</a>
-    <a href="perhitungan.php">🧮 Perhitungan</a>
+    <a href="perhitungan.php">🧮 Perhitungan Moora</a>
     <a href="hasil.php">🏆 Hasil Akhir</a>
+    <a href="logout.php" onclick="return confirm('Anda yakin akan keluar?')">
+    📤 Logout</a>
+
 </div>
 
 <div class="content">

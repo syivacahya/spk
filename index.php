@@ -1,4 +1,9 @@
 <?php
+include 'cek_login.php';
+include 'koneksi.php';
+?>
+
+<?php
 include 'koneksi.php';
 include 'layout/header.php';
 

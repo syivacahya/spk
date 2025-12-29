@@ -1,28 +1,38 @@
+/* ===============================
+   GLOBAL RESET & BASE STYLE
+================================ */
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
     background: #f4f6f8;
 }
 
+/* ===============================
+   SIDEBAR
+================================ */
 .sidebar {
     width: 220px;
-    background: #2c3e50;
     height: 100vh;
     position: fixed;
-    color: white;
+    background: #2c3e50;
+    color: #fff;
 }
 
 .sidebar h2 {
-    text-align: center;
-    padding: 15px;
     margin: 0;
+    padding: 15px;
+    text-align: center;
     background: #1a252f;
 }
 
 .sidebar a {
     display: block;
-    color: white;
     padding: 12px 20px;
+    color: #fff;
     text-decoration: none;
 }
 
@@ -30,25 +40,35 @@ body {
     background: #34495e;
 }
 
+/* ===============================
+   MAIN CONTENT
+================================ */
 .content {
     margin-left: 220px;
     padding: 20px;
 }
 
+/* ===============================
+   CARD
+================================ */
 .card {
-    background: white;
+    background: #fff;
     padding: 20px;
     margin-bottom: 15px;
     border-radius: 8px;
 }
 
+/* ===============================
+   TABLE
+================================ */
 table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
+    background: #fff;
 }
 
-table th, table td {
+table th,
+table td {
     padding: 10px;
     border: 1px solid #ddd;
     text-align: center;
@@ -56,17 +76,97 @@ table th, table td {
 
 table th {
     background: #3498db;
-    color: white;
+    color: #fff;
 }
 
+/* ===============================
+   BUTTON
+================================ */
 .btn {
     padding: 6px 10px;
     background: #3498db;
-    color: white;
+    color: #fff;
     text-decoration: none;
     border-radius: 4px;
 }
 
+.btn:hover {
+    opacity: 0.9;
+}
+
 .btn-danger {
     background: #e74c3c;
+}
+
+/* ===============================
+   LOGIN PAGE
+================================ */
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: #f4f6f8;
+}
+
+.login-card {
+    width: 380px;
+    background: #fff;
+    padding: 30px 25px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.12);
+}
+
+.login-card h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    color: #2c3e50;
+}
+
+.login-card .form-group {
+    margin-bottom: 18px;
+}
+
+.login-card label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 600;
+    color: #333;
+}
+
+.login-card input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.login-card input:focus {
+    border-color: #3498db;
+}
+
+.login-card button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    background: #2c3e50;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.login-card button:hover {
+    background: #1a252f;
+}
+
+.login-error {
+    margin-bottom: 15px;
+    padding: 8px;
+    border-radius: 5px;
+    text-align: center;
+    background: #ffe5e5;
+    color: #c0392b;
 }
