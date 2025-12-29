@@ -20,25 +20,33 @@ include 'layout/header.php';
 
         <?php
         $no = 1;
-        $q = mysqli_query($conn, "SELECT * FROM kriteria ORDER BY id_kriteria");
-        while ($d = mysqli_fetch_assoc($q)) {
+        $query = mysqli_query($conn, "SELECT * FROM kriteria ORDER BY id_kriteria");
+        while ($d = mysqli_fetch_assoc($query)) {
         ?>
         <tr>
             <td><?= $no ?></td>
-            <td><?= 'C'.$no ?></td>
+            <td><?= 'C' . $no ?></td>
             <td><?= $d['nama_kriteria'] ?></td>
             <td><?= ucfirst($d['jenis']) ?></td>
             <td><?= $d['bobot'] ?></td>
             <td>
-                <a href="edit_kriteria.php?id_kriteria=<?= $d['id_kriteria'] ?>" class="btn">Edit</a>
-                <a href="hapus.php?id_kriteria=<?= $d['id_kriteria'] ?>&tabel=kriteria"
+                <!-- EDIT -->
+                <a href="edit_kriteria.php?id_kriteria=<?= $d['id_kriteria'] ?>"
+                   class="btn">
+                   Edit
+                </a>
+
+                <!-- HAPUS -->
+                <a href="hapus.php?id=<?= $d['id_kriteria'] ?>&tabel=kriteria"
                    class="btn btn-danger"
-                   onclick="return confirm('Hapus kriteria ini?')">Hapus</a>
+                   onclick="return confirm('Hapus kriteria ini?')">
+                   Hapus
+                </a>
             </td>
         </tr>
-        <?php 
+        <?php
             $no++;
-        } 
+        }
         ?>
     </table>
 </div>

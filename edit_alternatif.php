@@ -2,66 +2,51 @@
 include 'koneksi.php';
 include 'layout/header.php';
 
-/* cek id */
+// ===============================
+// CEK ID
+// ===============================
 if (!isset($_GET['id'])) {
     die("ID alternatif tidak ditemukan");
 }
 
 $id = $_GET['id'];
 
-/* ambil data alternatif */
-$q = mysqli_query($conn, "
-    SELECT * FROM alternatif 
-    WHERE id_alternatif='$id'
-");
-$d = mysqli_fetch_assoc($q);
-
-if (!$d) {
+// ===============================
+// AMBIL DATA
+// ===============================
+$q = mysqli_query($conn, "SELECT * FROM alternatif WHERE id_alternatif='$id'");
+if (mysqli_num_rows($q) == 0) {
     die("Data alternatif tidak ditemukan");
 }
+$data = mysqli_fetch_assoc($q);
 
-/* daftar kos */
-$daftar_kos = [
-    'Wisma Arunika',
-    'Kost Madina Monochrome',
-    'Kost All Stay Unsiq 2',
-    'Puri Emas Kost'
-];
-
-/* update data */
-if (isset($_POST['submit'])) {
+// ===============================
+// PROSES UPDATE
+// ===============================
+if (isset($_POST['update'])) {
     $nama = $_POST['nama_kos'];
 
-    mysqli_query($conn, "
-        UPDATE alternatif 
-        SET nama_kos='$nama'
-        WHERE id_alternatif='$id'
-    ");
+    $update = mysqli_query(
+        $conn,
+        "UPDATE alternatif SET nama_kos='$nama' WHERE id_alternatif='$id'"
+    );
 
-    echo "<script>alert('Data berhasil diubah');
-          window.location='alternatif.php';</script>";
+    if ($update) {
+        echo "<script>alert('Alternatif berhasil diubah');window.location='alternatif.php';</script>";
+    } else {
+        echo mysqli_error($conn);
+    }
 }
 ?>
 
 <div class="card">
-    <h2>Edit Alternatif Kos</h2>
+    <h2>Edit Alternatif</h2>
 
-    <form method="POST">
-        <label>Kode Alternatif</label><br>
-        <input type="text" value="<?= $d['kode'] ?>" readonly><br><br>
-
+    <form method="post">
         <label>Nama Kos</label><br>
-        <select name="nama_kos" required>
-            <option value="">-- Pilih Kos --</option>
-            <?php foreach ($daftar_kos as $k): ?>
-                <option value="<?= $k ?>"
-                    <?= ($d['nama_kos'] == $k) ? 'selected' : '' ?>>
-                    <?= $k ?>
-                </option>
-            <?php endforeach; ?>
-        </select><br><br>
+        <input type="text" name="nama_kos" value="<?= $data['nama_kos'] ?>" required><br><br>
 
-        <button type="submit" name="submit" class="btn">Simpan</button>
+        <button type="submit" name="update" class="btn">Update</button>
         <a href="alternatif.php" class="btn btn-danger">Batal</a>
     </form>
 </div>

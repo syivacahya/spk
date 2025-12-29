@@ -22,11 +22,7 @@ if (!in_array($tabel, $allowed)) {
 // ===============================
 // TENTUKAN PRIMARY KEY
 // ===============================
-if ($tabel == 'kriteria') {
-    $kolom_id = 'id_kriteria';
-} else {
-    $kolom_id = 'id_alternatif';
-}
+$kolom_id = ($tabel == 'kriteria') ? 'id_kriteria' : 'id_alternatif';
 
 // ===============================
 // HAPUS DATA
