@@ -172,4 +172,3 @@ foreach($hasil as $id_alt => $yi) {
 
 </body>
 </html>
-```
