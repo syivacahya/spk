@@ -173,7 +173,7 @@ arsort($yi);
     <tr>
         <td><?= htmlspecialchars($a['nama_kos']) ?></td>
         <?php foreach ($kriteria as $idk => $k) { ?>
-            <td><?= round($normal[$idA][$idk],4) ?></td>
+            <td><?= round($normal[$idA][$idk],3) ?></td>
         <?php } ?>
     </tr>
     <?php } ?>
@@ -189,7 +189,7 @@ arsort($yi);
     <tr>
         <td><?= htmlspecialchars($a['nama_kos']) ?></td>
         <?php foreach ($kriteria as $idk => $k) { ?>
-            <td><?= round($terbobot[$idA][$idk],4) ?></td>
+            <td><?= round($terbobot[$idA][$idk],3) ?></td>
         <?php } ?>
     </tr>
     <?php } ?>
@@ -206,9 +206,9 @@ arsort($yi);
     <?php foreach ($alternatif as $idA => $a) { ?>
     <tr>
         <td><?= htmlspecialchars($a['nama_kos']) ?></td>
-        <td><?= round($yi_rincian[$idA]['benefit'],4) ?></td>
-        <td><?= round($yi_rincian[$idA]['cost'],4) ?></td>
-        <td><?= round($yi_rincian[$idA]['yi'],4) ?></td>
+        <td><?= round($yi_rincian[$idA]['benefit'],3) ?></td>
+        <td><?= round($yi_rincian[$idA]['cost'],3) ?></td>
+        <td><?= round($yi_rincian[$idA]['yi'],3) ?></td>
     </tr>
     <?php } ?>
 </table>
@@ -226,7 +226,7 @@ arsort($yi);
     <tr>
         <td><?= $rank ?></td>
         <td><?= htmlspecialchars($alternatif[$idA]['nama_kos']) ?></td>
-        <td><?= round($v,4) ?></td>
+        <td><?= round($v,3) ?></td>
     </tr>
     <?php
         $rank++;

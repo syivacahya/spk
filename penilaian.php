@@ -150,7 +150,7 @@ th{background:#3498db;color:#fff}
 <tr>
     <td><?= $i++ ?></td>
     <td><?= $alternatif[$id] ?></td>
-    <td><?= round($s, 4) ?></td>
+    <td><?= round($s,3) ?></td>
 </tr>
 <?php endforeach; ?>
 </table>

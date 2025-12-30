@@ -162,7 +162,7 @@ foreach($hasil as $id_alt => $yi) {
 <tr class="<?= $class ?>">
     <td><?= $rank++ ?></td>
     <td><?= isset($alternatif[$id_alt]) ? $alternatif[$id_alt] : "Alternatif ID $id_alt" ?></td>
-    <td><?= round($yi, 4) ?></td>
+    <td><?= round($yi, 3) ?></td>
 </tr>
 <?php } ?>
 </tbody>
