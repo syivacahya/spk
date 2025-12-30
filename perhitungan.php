@@ -2,12 +2,11 @@
 include 'koneksi.php';
 include 'layout/header.php';
 
-
 /* =========================
    AMBIL DATA KRITERIA
 ========================= */
 $kriteria = [];
-$qk = mysqli_query($conn, "SELECT * FROM kriteria ORDER BY id_kriteria");
+$qk = mysqli_query($conn, "SELECT * FROM kriteria ORDER BY id_kriteria") or die(mysqli_error($conn));
 while ($row = mysqli_fetch_assoc($qk)) {
     $kriteria[$row['id_kriteria']] = $row;
 }
@@ -16,7 +15,7 @@ while ($row = mysqli_fetch_assoc($qk)) {
    AMBIL DATA ALTERNATIF
 ========================= */
 $alternatif = [];
-$qa = mysqli_query($conn, "SELECT * FROM alternatif ORDER BY id_alternatif");
+$qa = mysqli_query($conn, "SELECT * FROM alternatif ORDER BY id_alternatif") or die(mysqli_error($conn));
 while ($row = mysqli_fetch_assoc($qa)) {
     $alternatif[$row['id_alternatif']] = $row;
 }
@@ -25,7 +24,7 @@ while ($row = mysqli_fetch_assoc($qa)) {
    AMBIL DATA PENILAIAN
 ========================= */
 $X = [];
-$qp = mysqli_query($conn, "SELECT * FROM penilaian");
+$qp = mysqli_query($conn, "SELECT * FROM penilaian") or die(mysqli_error($conn));
 while ($row = mysqli_fetch_assoc($qp)) {
     $X[$row['id_alternatif']][$row['id_kriteria']] = $row['nilai'];
 }
@@ -37,12 +36,14 @@ $normal = [];
 $nilaiPembagi = [];
 foreach ($kriteria as $idk => $k) {
     $sum = 0;
-    foreach ($X as $idA => $vals) {
-        $sum += isset($vals[$idk]) ? pow($vals[$idk], 2) : 0;
+    foreach ($alternatif as $idA => $a) {
+        $nilai = isset($X[$idA][$idk]) ? $X[$idA][$idk] : 0;
+        $sum += pow($nilai, 2);
     }
     $nilaiPembagi[$idk] = sqrt($sum);
-    foreach ($X as $idA => $vals) {
-        $normal[$idA][$idk] = isset($vals[$idk]) ? $vals[$idk]/$nilaiPembagi[$idk] : 0;
+    foreach ($alternatif as $idA => $a) {
+        $nilai = isset($X[$idA][$idk]) ? $X[$idA][$idk] : 0;
+        $normal[$idA][$idk] = $nilaiPembagi[$idk] != 0 ? $nilai / $nilaiPembagi[$idk] : 0;
     }
 }
 
@@ -50,9 +51,10 @@ foreach ($kriteria as $idk => $k) {
    TERBOBOT
 ========================= */
 $terbobot = [];
-foreach ($normal as $idA => $vals) {
+foreach ($alternatif as $idA => $a) {
     foreach ($kriteria as $idk => $k) {
-        $terbobot[$idA][$idk] = $vals[$idk] * $k['bobot'];
+        $nilai = isset($normal[$idA][$idk]) ? $normal[$idA][$idk] : 0;
+        $terbobot[$idA][$idk] = $nilai * $k['bobot'];
     }
 }
 
@@ -61,18 +63,19 @@ foreach ($normal as $idA => $vals) {
 ========================= */
 $yi = [];
 $yi_rincian = [];
-foreach ($terbobot as $idA => $vals) {
+foreach ($alternatif as $idA => $a) {
     $benefit = 0;
     $cost = 0;
-    foreach ($vals as $idk => $v) {
-        if ($kriteria[$idk]['jenis'] == 'benefit') $benefit += $v;
-        else $cost += $v;
+    foreach ($kriteria as $idk => $k) {
+        $nilai = isset($terbobot[$idA][$idk]) ? $terbobot[$idA][$idk] : 0;
+        if ($k['jenis'] == 'benefit') $benefit += $nilai;
+        else $cost += $nilai;
     }
     $yi[$idA] = $benefit - $cost;
     $yi_rincian[$idA] = [
-        'benefit'=>$benefit,
-        'cost'=>$cost,
-        'yi'=>$yi[$idA]
+        'benefit' => $benefit,
+        'cost' => $cost,
+        'yi' => $yi[$idA]
     ];
 }
 
@@ -84,12 +87,62 @@ arsort($yi);
 <head>
     <title>Perhitungan MOORA Lengkap</title>
     <style>
-        body { font-family: Arial; margin:20px; }
-        table { border-collapse: collapse; margin-top:20px; width:90%; }
-        th, td { border:1px solid #333; padding:8px 10px; text-align:center; }
-        th { background:#f2f2f2; }
-        h2 { margin-top:40px; }
-    </style>
+    body{font-family:Arial;background:#f4f6f9}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border:1px solid #ddd;padding:8px;text-align:center}
+    th{background:#3498db;color:#fff}
+    .btn{padding:6px 10px;border-radius:4px;color:#fff;text-decoration:none}
+    .btn-add{background:#3498db}
+    .btn-edit{background:#f39c12}
+    .btn-del{background:#e74c3c}
+    .card{background:#fff;padding:20px;border-radius:6px;margin-top:15px}
+    .form-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 6px;
+        margin-top: 15px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-actions {
+        margin-top: 20px;
+    }
+
+    .form-actions button {
+        padding: 8px 16px;
+        background: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .form-actions button:hover {
+        background: #217dbb;
+    }
+</style>
 </head>
 <body>
 
@@ -101,7 +154,7 @@ arsort($yi);
     </tr>
     <?php foreach ($alternatif as $idA => $a) { ?>
     <tr>
-        <td><?= $a['nama_kos'] ?></td>
+        <td><?= htmlspecialchars($a['nama_kos']) ?></td>
         <?php foreach ($kriteria as $idk => $k) { ?>
             <td><?= isset($X[$idA][$idk]) ? $X[$idA][$idk] : 0 ?></td>
         <?php } ?>
@@ -117,7 +170,7 @@ arsort($yi);
     </tr>
     <?php foreach ($alternatif as $idA => $a) { ?>
     <tr>
-        <td><?= $a['nama_kos'] ?></td>
+        <td><?= htmlspecialchars($a['nama_kos']) ?></td>
         <?php foreach ($kriteria as $idk => $k) { ?>
             <td><?= round($normal[$idA][$idk],4) ?></td>
         <?php } ?>
@@ -133,7 +186,7 @@ arsort($yi);
     </tr>
     <?php foreach ($alternatif as $idA => $a) { ?>
     <tr>
-        <td><?= $a['nama_kos'] ?></td>
+        <td><?= htmlspecialchars($a['nama_kos']) ?></td>
         <?php foreach ($kriteria as $idk => $k) { ?>
             <td><?= round($terbobot[$idA][$idk],4) ?></td>
         <?php } ?>
@@ -151,7 +204,7 @@ arsort($yi);
     </tr>
     <?php foreach ($alternatif as $idA => $a) { ?>
     <tr>
-        <td><?= $a['nama_kos'] ?></td>
+        <td><?= htmlspecialchars($a['nama_kos']) ?></td>
         <td><?= round($yi_rincian[$idA]['benefit'],4) ?></td>
         <td><?= round($yi_rincian[$idA]['cost'],4) ?></td>
         <td><?= round($yi_rincian[$idA]['yi'],4) ?></td>
@@ -171,7 +224,7 @@ arsort($yi);
     foreach ($yi as $idA => $v) { ?>
     <tr>
         <td><?= $rank ?></td>
-        <td><?= $alternatif[$idA]['nama_kos'] ?></td>
+        <td><?= htmlspecialchars($alternatif[$idA]['nama_kos']) ?></td>
         <td><?= round($v,4) ?></td>
     </tr>
     <?php

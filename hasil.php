@@ -1,45 +1,43 @@
+
 <?php
 include 'koneksi.php';
 include 'layout/header.php';
 
 // ===============================
-// AMBIL DATA ALTERNATIF & KRITERIA
+// LOGIKA PERHITUNGAN PHP (PERTAHANKAN)
 // ===============================
+
+// Ambil Alternatif
 $alternatif = [];
 $q_alt = mysqli_query($conn, "SELECT * FROM alternatif");
 while($a = mysqli_fetch_assoc($q_alt)){
     $alternatif[$a['id_alternatif']] = $a['nama_kos'];
 }
 
+// Ambil Kriteria
 $kriteria = [];
 $q_krit = mysqli_query($conn, "SELECT * FROM kriteria");
 while($k = mysqli_fetch_assoc($q_krit)){
     $kriteria[$k['id_kriteria']] = [
         'nama' => $k['nama_kriteria'],
-        'jenis' => $k['jenis'], // benefit / cost
+        'jenis' => $k['jenis'],
         'bobot' => $k['bobot']
     ];
 }
 
-// ===============================
-// AMBIL PENILAIAN
-// ===============================
+// Ambil Penilaian
 $nilai = [];
 $q_nilai = mysqli_query($conn, "SELECT * FROM penilaian");
 while($d = mysqli_fetch_assoc($q_nilai)){
     $nilai[$d['id_alternatif']][$d['id_kriteria']] = $d['nilai'];
 }
 
-// ===============================
-// NORMALISASI
-// ===============================
+// Normalisasi
 $normalisasi = [];
 foreach($kriteria as $id_k => $k){
     $sum_sqr = 0;
     foreach($nilai as $id_alt => $alt){
-        if(isset($alt[$id_k])){
-            $sum_sqr += pow($alt[$id_k], 2);
-        }
+        if(isset($alt[$id_k])) $sum_sqr += pow($alt[$id_k], 2);
     }
     $sqrt_sum = sqrt($sum_sqr);
     if($sqrt_sum == 0) $sqrt_sum = 1;
@@ -49,9 +47,7 @@ foreach($kriteria as $id_k => $k){
     }
 }
 
-// ===============================
-// TERBOBOT
-// ===============================
+// Terbobot
 $terbobot = [];
 foreach($normalisasi as $id_alt => $alt){
     foreach($alt as $id_k => $n){
@@ -59,9 +55,7 @@ foreach($normalisasi as $id_alt => $alt){
     }
 }
 
-// ===============================
-// HITUNG MOORA
-// ===============================
+// Hitung Yi & Ranking
 $yi_data = [];
 $hasil = [];
 foreach($terbobot as $id_alt => $alt){
@@ -75,127 +69,106 @@ foreach($terbobot as $id_alt => $alt){
         }
     }
     $yi = $benefit - $cost;
-    $yi_data[$id_alt] = [
-        'benefit' => $benefit,
-        'cost' => $cost,
-        'yi' => $yi
-    ];
+    $yi_data[$id_alt] = ['yi' => $yi];
     $hasil[$id_alt] = $yi;
 }
 
-// ===============================
-// URUTKAN HASIL
-// ===============================
 arsort($hasil);
 ?>
 
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Perhitungan MOORA - SPK Kos</title>
+    <title>Hasil Perankingan</title>
     <style>
-        body { font-family: Arial; margin:20px; background:#f9f9f9; }
-        h2, h3 { margin-top:30px; }
-        table { border-collapse: collapse; width: 80%; margin-bottom:30px; }
-        th, td { border:1px solid #333; padding:8px; text-align:center; }
-        th { background:#4CAF50; color:white; }
-        tr:nth-child(even){ background:#f2f2f2; }
-        tr:hover { background:#ddd; }
-        .container { max-width:1000px; margin:auto; }
-    </style>
+    body{font-family:Arial;background:#f4f6f9}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{border:1px solid #ddd;padding:8px;text-align:center}
+    th{background:#3498db;color:#fff}
+    .btn{padding:6px 10px;border-radius:4px;color:#fff;text-decoration:none}
+    .btn-add{background:#3498db}
+    .btn-edit{background:#f39c12}
+    .btn-del{background:#e74c3c}
+    .card{background:#fff;padding:20px;border-radius:6px;margin-top:15px}
+    .form-card {
+        background: #fff;
+        padding: 20px;
+        border-radius: 6px;
+        margin-top: 15px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+    }
+
+    .form-actions {
+        margin-top: 20px;
+    }
+
+    .form-actions button {
+        padding: 8px 16px;
+        background: #3498db;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .form-actions button:hover {
+        background: #217dbb;
+    }
+</style>
 </head>
 <body>
+
 <div class="container">
-
-<h2>Perhitungan MOORA - SPK Pemilihan Kos</h2>
-
-<!-- Matriks Keputusan -->
-<h3>Matriks Keputusan (X)</h3>
-<table>
-<tr>
-    <th>Alternatif</th>
-    <?php foreach($kriteria as $k) echo "<th>{$k['nama']}</th>"; ?>
-</tr>
-<?php foreach($nilai as $id_alt => $vals){ ?>
-<tr>
-    <td><?= $alternatif[$id_alt] ?></td>
-    <?php foreach($kriteria as $id_k => $k){ ?>
-        <td><?= isset($vals[$id_k]) ? $vals[$id_k] : 0 ?></td>
-    <?php } ?>
-</tr>
-<?php } ?>
-</table>
-
-<!-- Matriks Normalisasi -->
-<h3>Matriks Normalisasi</h3>
-<table>
-<tr>
-    <th>Alternatif</th>
-    <?php foreach($kriteria as $k) echo "<th>{$k['nama']}</th>"; ?>
-</tr>
-<?php foreach($normalisasi as $id_alt => $vals){ ?>
-<tr>
-    <td><?= $alternatif[$id_alt] ?></td>
-    <?php foreach($kriteria as $id_k => $k){ ?>
-        <td><?= round($vals[$id_k],4) ?></td>
-    <?php } ?>
-</tr>
-<?php } ?>
-</table>
-
-<!-- Matriks Terbobot -->
-<h3>Matriks Normalisasi Terbobot</h3>
-<table>
-<tr>
-    <th>Alternatif</th>
-    <?php foreach($kriteria as $k) echo "<th>{$k['nama']}</th>"; ?>
-</tr>
-<?php foreach($terbobot as $id_alt => $vals){ ?>
-<tr>
-    <td><?= $alternatif[$id_alt] ?></td>
-    <?php foreach($kriteria as $id_k => $k){ ?>
-        <td><?= round($vals[$id_k],4) ?></td>
-    <?php } ?>
-</tr>
-<?php } ?>
-</table>
-
-<!-- Perhitungan Yi -->
-<h3>Perhitungan Yi (Benefit - Cost)</h3>
-<table>
-<tr>
-    <th>Alternatif</th>
-    <th>Benefit</th>
-    <th>Cost</th>
-    <th>Yi</th>
-</tr>
-<?php foreach($yi_data as $id_alt => $v){ ?>
-<tr>
-    <td><?= $alternatif[$id_alt] ?></td>
-    <td><?= round($v['benefit'],4) ?></td>
-    <td><?= round($v['cost'],4) ?></td>
-    <td><?= round($v['yi'],4) ?></td>
-</tr>
-<?php } ?>
-</table>
-
-<!-- Ranking Akhir -->
-<h3>Ranking Akhir</h3>
-<table>
-<tr>
-    <th>Rank</th>
-    <th>Alternatif</th>
-    <th>Yi</th>
-</tr>
-<?php $rank=1; foreach($hasil as $id_alt => $yi){ ?>
-<tr>
+    <h2 style="text-align: center; margin-bottom: 5px;">Hasil Perankingan</h2>
+    <p style="text-align: center; color: #666; margin-top: 0;">Urutan Kos Terbaik (Metode MOORA)</p>
+    
+    <table>
+        <thead>
+            <tr>
+                <th width="15%">Rank</th>
+                <th width="60%">Nama Alternatif</th>
+                <th width="25%">Nilai Yi</th>
+            </tr>
+        </thead>
+        <tbody>
+<?php 
+$rank = 1; 
+foreach($hasil as $id_alt => $yi) { 
+    $class = ($rank == 1) ? 'top-rank' : '';
+?>
+<tr class="<?= $class ?>">
     <td><?= $rank++ ?></td>
-    <td><?= $alternatif[$id_alt] ?></td>
-    <td><?= round($yi,4) ?></td>
+    <td><?= isset($alternatif[$id_alt]) ? $alternatif[$id_alt] : "Alternatif ID $id_alt" ?></td>
+    <td><?= round($yi, 4) ?></td>
 </tr>
 <?php } ?>
-</table>
+</tbody>
 
+    </table>
 </div>
+
 </body>
 </html>
+```
