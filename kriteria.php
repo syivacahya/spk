@@ -140,7 +140,7 @@ table tr:hover {
                 <?= number_format($totalBobot, 2) ?>
                 (Ketentuan: total bobot harus bernilai 1)
             </span>
-            <span class="badge badge-warning">BELUM VALID</span>
+            <!-- <span class="badge badge-warning">BELUM VALID</span> -->
         </div>
     <?php endif; ?>
 

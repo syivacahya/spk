@@ -128,10 +128,10 @@ input:focus, select:focus {
 <div class="card">
     <h2>Tambah Kriteria</h2>
 
-    <div class="info-box">
+    <!-- <div class="info-box">
         <b>Total Bobot Saat Ini:</b> <?= number_format($totalBobot, 2) ?><br>
         <b>Sisa Bobot Tersedia:</b> <?= number_format($sisaBobot, 2) ?>
-    </div>
+    </div> -->
 
     <form method="post">
         <div class="form-group">
