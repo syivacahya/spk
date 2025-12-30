@@ -94,7 +94,7 @@ foreach ($normalisasi as $id => $a) {
     }
     $skor[$id] = $benefit - $cost;
 }
-arsort($skor);
+arsort($skor);jjj
 ?>
 
 <style>
