@@ -90,7 +90,7 @@ $qDetail = mysqli_query($conn,"
 </head>
 <body>
 
-<div class="content">
+<div class="user-container">
 
     <div class="card">
         <h2>Detail Kos</h2>

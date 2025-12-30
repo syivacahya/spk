@@ -71,7 +71,7 @@ arsort($hasil);
 </head>
 <body>
 
-<div class="content">
+<div class="user-container">
     <div class="card" style="text-align:center">
         <h2>Sistem Rekomendasi Pemilihan Kos</h2>
         <p>
