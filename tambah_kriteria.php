@@ -47,11 +47,10 @@ if (isset($_POST['simpan'])) {
 <style>
 /* ===== CARD ===== */
 .card {
-    max-width: 520px;
-    background: #ffffff;
-    padding: 28px;
-    border-radius: 16px;
-    box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    background: #fff;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
 }
 
 /* ===== HEADER ===== */
